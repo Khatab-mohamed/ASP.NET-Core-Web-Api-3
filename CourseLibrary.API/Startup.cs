@@ -2,6 +2,7 @@ using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +23,10 @@ namespace CourseLibrary.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(setupAction =>
-                setupAction.ReturnHttpNotAcceptable = true);
-            services.AddControllers();
+            {
+                setupAction.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
+
 
             services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
 
