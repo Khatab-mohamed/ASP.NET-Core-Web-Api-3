@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
@@ -22,17 +23,14 @@ namespace CourseLibrary.API.Controllers
         public ActionResult<IEnumerable<AuthorDto>> GetAuthors()
         {
             var authorsFromRepo = _courseLibraryRepository.GetAuthors();
-            var authors = new List<AuthorDto>();
-            foreach (var author in authorsFromRepo)
-            {
-                authors.Add(new AuthorDto()
+            var authors = authorsFromRepo.Select(author => 
+                new AuthorDto()
                 {
                     Id = author.Id,
                     Name = $"{author.FirstName} {author.LastName}",
                     MainCategory = author.MainCategory,
                     Age = author.DateOfBirth.GetCurrentAge()
-                });
-            }
+                }).ToList();
             return Ok(authors);
         }
 
