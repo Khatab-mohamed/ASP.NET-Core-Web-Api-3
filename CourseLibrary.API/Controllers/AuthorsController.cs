@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using CourseLibrary.API.Entities;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.ResourceParameters;
@@ -35,12 +36,21 @@ namespace CourseLibrary.API.Controllers
             return Ok(authors);
         }
 
-        [HttpGet("{authorId}")]
+        [HttpGet("{authorId}" ,Name = "GetAuthor")]
         public IActionResult GetAuthor(Guid authorId)
         {
             var authorFromRepo = _courseLibraryRepository.GetAuthor(authorId);
             if (authorFromRepo == null) return NotFound();
             return Ok(authorFromRepo);
+        }
+        [HttpPost]
+        public ActionResult<AuthorDto> CreateAuthor([FromBody]AuthorCreationDto authorDto)
+        {
+            var author = _mapper.Map<Author>(authorDto);
+            _courseLibraryRepository.AddAuthor(author);
+            _courseLibraryRepository.Save();
+            var authorToReturn = _mapper.Map<AuthorDto>(author);
+            return CreatedAtRoute("GetAuthor", new {authorId = authorToReturn.Id}, authorToReturn);
         }
     }
 }
